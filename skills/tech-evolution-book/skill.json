@@ -1,0 +1,34 @@
+{
+  "name": "tech-evolution-book",
+  "version": "1.0.0",
+  "type": "skill",
+  "description": "Analyze technology evolution in book chapter format - track iterations, improvements, and implementation details of technologies like AI models, frameworks, etc.",
+  "entry": "SKILL.md",
+  "tags": [
+    "technology",
+    "evolution",
+    "history",
+    "analysis",
+    "ai-models",
+    "research",
+    "web-search",
+    "book"
+  ],
+  "languages": ["zh", "en"],
+  "metadata": {
+    "category": "research",
+    "requires": ["web-search", "duckduckgo"],
+    "patterns": [
+      "analyze tech evolution",
+      "track model iterations",
+      "技术演进分析",
+      "模型迭代",
+      "发展历程",
+      "版本历史",
+      "analyze qwen",
+      "analyze llama",
+      "analyze gpt",
+      "model evolution book"
+    ]
+  }
+}

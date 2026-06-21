@@ -18,6 +18,25 @@
         "github"
       ],
       "languages": ["zh", "en"]
+    },
+    {
+      "name": "tech-evolution-book",
+      "repo": "hellostronger/ai-skills",
+      "path": "skills/tech-evolution-book",
+      "version": "1.0.0",
+      "description": "Analyze technology evolution in book chapter format - track iterations, improvements, and implementation details",
+      "author": "",
+      "tags": [
+        "technology",
+        "evolution",
+        "history",
+        "analysis",
+        "ai-models",
+        "research",
+        "web-search",
+        "book"
+      ],
+      "languages": ["zh", "en"]
     }
   ]
 }

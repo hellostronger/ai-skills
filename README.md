@@ -7,6 +7,7 @@ A collection of Claude Code skills for source code analysis, documentation gener
 | Skill | Description |
 |-------|-------------|
 | [source-code-book](skills/source-code-book/) | Generate comprehensive source code analysis books for open-source projects |
+| [tech-evolution-book](skills/tech-evolution-book/) | Analyze technology evolution in book format - track iterations, improvements, implementation details |
 
 ---
 
