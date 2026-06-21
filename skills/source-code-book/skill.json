@@ -1,0 +1,29 @@
+{
+  "name": "source-code-book",
+  "version": "1.0.0",
+  "type": "skill",
+  "description": "Generate comprehensive source code analysis books for open-source projects, producing VitePress-based technical books following the CoolClaws book pattern.",
+  "author": "",
+  "entry": "SKILL.md",
+  "tags": [
+    "documentation",
+    "vitepress",
+    "source-code-analysis",
+    "book-generation",
+    "github"
+  ],
+  "languages": ["zh", "en"],
+  "metadata": {
+    "category": "documentation",
+    "patterns": [
+      "analyze this repo",
+      "create a source code book",
+      "write analysis for",
+      "generate documentation book",
+      "源码解析",
+      "源码分析",
+      "写一本书",
+      "分析这个仓库"
+    ]
+  }
+}

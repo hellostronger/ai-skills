@@ -1,0 +1,23 @@
+{
+  "name": "ai-skills-cli",
+  "version": "1.0.0",
+  "description": "CLI tool for managing AI skills",
+  "main": "bin/ai-skills.js",
+  "bin": {
+    "ai-skills": "bin/ai-skills.js"
+  },
+  "scripts": {
+    "test": "node bin/ai-skills.js"
+  },
+  "keywords": [
+    "ai",
+    "skills",
+    "claude",
+    "cli"
+  ],
+  "author": "",
+  "license": "MIT",
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}

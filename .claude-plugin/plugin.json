@@ -1,0 +1,12 @@
+{
+  "name": "ai-skills-plugin",
+  "description": "AI skills for Claude Code — source code analysis, documentation generation, and more",
+  "version": "1.0.0",
+  "author": {
+    "name": ""
+  },
+  "homepage": "https://github.com/hellostronger/ai-skills",
+  "repository": "https://github.com/hellostronger/ai-skills",
+  "license": "MIT",
+  "skills": "./skills"
+}

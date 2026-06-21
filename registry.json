@@ -1,0 +1,23 @@
+{
+  "version": "1.0.0",
+  "name": "ai-skills-registry",
+  "description": "Official registry for ai-skills marketplace",
+  "skills": [
+    {
+      "name": "source-code-book",
+      "repo": "hellostronger/ai-skills",
+      "path": "skills/source-code-book",
+      "version": "1.0.0",
+      "description": "Generate comprehensive source code analysis books for open-source projects",
+      "author": "",
+      "tags": [
+        "documentation",
+        "vitepress",
+        "source-code-analysis",
+        "book-generation",
+        "github"
+      ],
+      "languages": ["zh", "en"]
+    }
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  "name": "ai-skills",
+  "version": "1.0.0",
+  "description": "A collection of Claude Code skills for source code analysis, documentation generation, and more",
+  "main": "packages/cli/bin/ai-skills.js",
+  "bin": {
+    "ai-skills": "packages/cli/bin/ai-skills.js"
+  },
+  "scripts": {
+    "test": "node packages/cli/bin/ai-skills.js list"
+  },
+  "keywords": [
+    "ai",
+    "skills",
+    "claude",
+    "claude-code",
+    "documentation",
+    "source-code-analysis"
+  ],
+  "author": "",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hellostronger/ai-skills.git"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}

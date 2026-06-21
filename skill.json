@@ -1,0 +1,9 @@
+{
+  "name": "ai-skills",
+  "version": "1.0.0",
+  "type": "skill-collection",
+  "description": "A collection of Claude Code skills for source code analysis, documentation generation, and more.",
+  "author": "",
+  "skills": ["source-code-book"],
+  "tags": ["documentation", "source-code-analysis", "claude-code-skills"]
+}

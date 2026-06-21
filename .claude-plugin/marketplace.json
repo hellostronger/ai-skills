@@ -1,0 +1,19 @@
+{
+  "name": "ai-skills",
+  "owner": {
+    "name": "",
+    "url": ""
+  },
+  "metadata": {
+    "description": "AI skills for Claude Code — source code analysis, documentation generation, and more",
+    "version": "1.0.0",
+    "repository": "https://github.com/hellostronger/ai-skills"
+  },
+  "plugins": [
+    {
+      "name": "ai-skills-plugin",
+      "description": "Skills for source code analysis, book generation, and documentation",
+      "source": "./"
+    }
+  ]
+}
