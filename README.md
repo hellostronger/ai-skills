@@ -4,31 +4,32 @@ A collection of Claude Code skills for source code analysis, documentation gener
 
 ## Skills
 
-### source-code-book
+| Skill | Description |
+|-------|-------------|
+| [source-code-book](skills/source-code-book/) | Generate comprehensive source code analysis books for open-source projects |
 
-Generate comprehensive source code analysis books for open-source projects following the CoolClaws pattern.
+## Directory Structure
 
-**Features:**
-- Clone and analyze GitHub repositories
-- Generate structured VitePress-based documentation books
-- 17+ chapters with code snippets, diagrams, and comparisons
-- GitHub Pages deployment ready
-
-**Usage:**
 ```
-分析这个仓库 https://github.com/owner/repo
+ai-skills/
+├── README.md
+└── skills/
+    └── source-code-book/
+        ├── SKILL.md
+        ├── TEMPLATES.md
+        └── QUICKSTART.md
 ```
+
+Each skill is a self-contained folder under `skills/`.
 
 ## Installation
 
-Copy skill folders to your Claude Code skills directory:
-
 ```bash
-# macOS/Linux
-cp -r source-code-book ~/.claude/skills/
+# Clone the repo
+git clone https://github.com/hellostronger/ai-skills.git
 
-# Windows
-xcopy source-code-book %USERPROFILE%\.claude\skills\source-code-book\ /E /I
+# Copy a specific skill to your Claude Code skills directory
+cp -r ai-skills/skills/source-code-book ~/.claude/skills/
 ```
 
 ## License
