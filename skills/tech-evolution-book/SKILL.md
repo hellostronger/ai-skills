@@ -15,10 +15,13 @@ requires_tools:
   - WebFetch
   - Bash  # For PDF download and text extraction
   - Read  # For reading extracted text files
+  - kimi-webbridge  # For real browser access with login sessions
 fallback_tools:
+  - If WebSearch/WebFetch fails, use kimi-webbridge to access pages directly
   - If PDF reading fails, use huggingface papers API
   - Use paperswithcode for benchmark summaries
   - Use semantic scholar API as backup
+  - Use kimi-webbridge to access official blogs and GitHub pages
 ---
 
 # Tech Evolution Book Generator
@@ -1107,4 +1110,125 @@ Required Sections:
 4. Standard Library Changes
 5. Tooling Updates (compilers, linters)
 6. Community & Ecosystem Growth
+```
+
+---
+
+## kimi-webbridge Browser Search Strategy
+
+### When to Use kimi-webbridge
+
+**Use kimi-webbridge when**:
+- WebSearch/WebFetch blocked by domain restrictions
+- Need to access official blogs (qwenlm.github.io, etc.)
+- Need real browser with login sessions
+- Need to navigate and extract content from dynamic pages
+
+### kimi-webbridge Workflow
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│              kimi-webbridge Search Workflow                  │
+├─────────────────────────────────────────────────────────────┤
+│                                                             │
+│  1. Check daemon status                                     │
+│     ~/.kimi-webbridge/bin/kimi-webbridge status             │
+│     → Ensure running: true, extension_connected: true       │
+│                                                             │
+│  2. Navigate to target page                                 │
+│     POST http://127.0.0.1:10086/command                     │
+│     {                                                        │
+│       "action": "navigate",                                 │
+│       "args": {                                              │
+│         "url": "https://qwenlm.github.io/blog/",            │
+│         "newTab": true                                      │
+│       },                                                     │
+│       "session": "tech-evolution-research"                  │
+│     }                                                        │
+│                                                             │
+│  3. Get page snapshot                                       │
+│     POST http://127.0.0.1:10086/command                     │
+│     {                                                        │
+│       "action": "snapshot",                                 │
+│       "args": {}                                             │
+│     }                                                        │
+│     → Returns accessibility tree with @e references         │
+│                                                             │
+│  4. Extract specific information                            │
+│     POST http://127.0.0.1:10086/command                     │
+│     {                                                        │
+│       "action": "evaluate",                                 │
+│       "args": {                                              │
+│         "code": "(() => {                                    │
+│           const texts = [];                                  │
+│           document.querySelectorAll('*').forEach(el => {    │
+│             if (el.innerText.includes('Release'))            │
+│               texts.push(el.innerText);                      │
+│           });                                                │
+│           return texts;                                      │
+│         })()"                                                │
+│       }                                                      │
+│     }                                                        │
+│                                                             │
+│  5. Click to load more                                      │
+│     POST http://127.0.0.1:10086/command                     │
+│     {                                                        │
+│       "action": "click",                                    │
+│       "args": { "selector": "@e3" }                         │
+│     }                                                        │
+│                                                             │
+│  6. Close session                                           │
+│     POST http://127.0.0.1:10086/command                     │
+│     {                                                        │
+│       "action": "close_session"                             │
+│     }                                                        │
+│                                                             │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### Example: Getting Qwen Latest Versions
+
+```javascript
+// Navigate to official blog
+await kimiNavigate("https://qwen.ai/research", "qwen-research");
+
+// Get snapshot
+const snapshot = await kimiSnapshot();
+
+// Find version mentions
+const versions = await kimiEvaluate(`
+  (() => {
+    const texts = [];
+    document.querySelectorAll('*').forEach(el => {
+      if (el.innerText && el.innerText.includes('Qwen3')) {
+        texts.push(el.innerText.trim());
+      }
+    });
+    return [...new Set(texts)].slice(0, 30);
+  })()
+`);
+
+// Parse version information
+// Extract: Qwen3-1.7B, Qwen3-8B, Qwen3-30B-A3B, Qwen3.5-..., Qwen3.7-Plus
+
+// Close session
+await kimiCloseSession();
+```
+
+### kimi-webbridge vs Other Tools
+
+| Tool | Strengths | Limitations |
+|------|-----------|-------------|
+| **WebSearch** | Fast, simple | May be blocked, incomplete results |
+| **WebFetch** | Direct page access | Domain restrictions common |
+| **kimi-webbridge** | Real browser, login sessions, dynamic content | Requires daemon running |
+
+### Recommended Tool Order
+
+```
+1. Try WebSearch first (fastest)
+2. If blocked → Try WebFetch
+3. If still blocked → Use kimi-webbridge
+4. For official blogs → Prefer kimi-webbridge directly
+5. For GitHub pages → Prefer kimi-webbridge directly
 ```
