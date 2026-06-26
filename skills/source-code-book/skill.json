@@ -1,16 +1,18 @@
 {
   "name": "source-code-book",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "type": "skill",
-  "description": "Generate comprehensive source code analysis books for open-source projects, producing VitePress-based technical books following the CoolClaws book pattern.",
-  "author": "",
+  "description": "Generate comprehensive source code analysis books for open-source projects. Chapter count is dynamically determined by code volume. Every significant implementation preserves its real code with line-by-line annotations.",
+  "author": "hello_strong",
   "entry": "SKILL.md",
   "tags": [
     "documentation",
     "vitepress",
     "source-code-analysis",
     "book-generation",
-    "github"
+    "github",
+    "code-detail-preservation",
+    "dynamic-chapter-planning"
   ],
   "languages": ["zh", "en"],
   "metadata": {
@@ -23,7 +25,13 @@
       "源码解析",
       "源码分析",
       "写一本书",
-      "分析这个仓库"
-    ]
+      "分析这个仓库",
+      "尽可能详细",
+      "保留代码细节"
+    ],
+    "changelog": {
+      "2.0.0": "Dynamic chapter planning based on LOC. Mandatory real code preservation. New Template D (Configuration) and Template E (Registry). Anti-patterns section. SSH push fallback.",
+      "1.0.0": "Initial version based on CoolClaws pattern."
+    }
   }
 }

@@ -1,16 +1,17 @@
 ---
 name: source-code-book
-description: "Generate comprehensive source code analysis books for open-source projects. Use when the user wants to create a deep-dive book-style documentation of a GitHub repository, generate source code analysis content, or produce VitePress-based technical books. Triggers include: 'analyze this repo', 'create a source code book', 'write analysis for', 'generate documentation book', '源码解析', '源码分析', '写一本书', '分析这个仓库'. This skill clones the target repo, analyzes architecture, generates structured chapters following the CoolClaws book pattern, and sets up VitePress for GitHub Pages deployment."
+description: "Generate comprehensive source code analysis books for open-source projects. Chapter count is dynamically determined by code volume — small repos get focused analysis, large repos get exhaustive deep-dives. Every significant implementation gets its real code preserved with line-by-line annotations. Use when the user wants to create a deep-dive book-style documentation of a GitHub repository, generate source code analysis content, or produce VitePress-based technical books. Triggers include: 'analyze this repo', 'create a source code book', 'write analysis for', 'generate documentation book', '源码解析', '源码分析', '写一本书', '分析这个仓库', '尽可能详细', '保留代码细节'."
 allowed-tools: Bash(curl:*), Bash(git:*), Read, Write, Edit, Glob, Grep, WebFetch
 metadata:
-  author: "Reverse-engineered from CoolClaws pattern"
-  version: "1.0.0"
+  author: "Reverse-engineered from CoolClaws pattern, optimized for code-detail preservation"
+  version: "2.0.0"
   based-on: "https://github.com/coolclaws"
+  optimized-for: "dynamic-chapter-planning + code-detail-preservation"
 ---
 
 # source-code-book
 
-Generate comprehensive source code analysis books for open-source projects following the proven CoolClaws pattern. Produces VitePress-based static sites with structured chapters, ready for GitHub Pages deployment.
+Generate comprehensive source code analysis books for open-source projects. **Chapter count is dynamically determined by code volume** — a 500-line utility gets 8 chapters, a 20,000-line framework gets 40+ chapters. **Every significant implementation preserves its real code with line-by-line annotations**, not simplified pseudo-code.
 
 ## When to Use
 
@@ -18,16 +19,18 @@ Generate comprehensive source code analysis books for open-source projects follo
 - User wants to create source code documentation in book format
 - User asks for "源码解析", "源码分析", or "write a book about this repo"
 - User wants structured technical documentation with chapters and appendices
+- User says "尽可能详细", "保留代码细节", "每个函数都要讲"
 
 ## Workflow Overview
 
-This skill follows a 5-phase approach:
+This skill follows a 6-phase approach:
 
-1. **Clone & Discover** - Clone target repo, map structure, identify key modules
-2. **Analyze Architecture** - Understand design patterns, dependencies, data flow
-3. **Plan Book Structure** - Define chapters based on architectural layers
-4. **Generate Content** - Write chapters with code snippets, diagrams, comparisons
-5. **Build & Deploy** - Set up VitePress, configure navigation, deploy to GitHub Pages
+1. **Clone & Discover** — Clone target repo, map structure, extract LOC metrics
+2. **Analyze Architecture** — Understand design patterns, dependencies, data flow
+3. **Dynamic Chapter Planning** — Calculate chapter count from LOC, plan based on code density
+4. **Deep Code Reading** — Read every significant file, annotate code details
+5. **Generate Content** — Write chapters with real code snippets, diagrams, comparisons
+6. **Build & Deploy** — Set up VitePress, configure navigation, deploy to GitHub Pages
 
 ---
 
@@ -36,14 +39,11 @@ This skill follows a 5-phase approach:
 ### 1.1 Clone the Repository
 
 ```bash
-# Deep clone for full history analysis
 git clone --depth 1 https://github.com/<owner>/<repo>.git target-repo
 cd target-repo
 ```
 
 ### 1.2 Map Repository Structure
-
-Use the explore agent to understand the codebase:
 
 ```
 Task: Analyze the repository structure and identify:
@@ -65,15 +65,20 @@ Output a structured report with:
 ### 1.3 Extract Key Metrics
 
 ```bash
-# Line counts by directory
-find . -name "*.py" -o -name "*.ts" -o -name "*.js" | grep -v node_modules | xargs wc -l | sort -n | tail -20
+# Total LOC by language
+find . -type f -not -path "*/node_modules/*" -not -path "*/.git/*" -not -path "*/__pycache__/*" | xargs file --mime-type 2>/dev/null | grep -E "text|python|javascript" | cut -d: -f1 | xargs wc -l 2>/dev/null | tail -1
 
-# Git history stats
-git log --oneline | wc -l
-git log --format='%an' | sort | uniq -c | sort -rn | head -10
+# LOC by directory (key modules only, exclude tests/examples)
+for dir in <core-dirs>; do
+  count=$(find "$dir" -name "*.py" -o -name "*.ts" -o -name "*.js" 2>/dev/null | xargs wc -l 2>/dev/null | tail -1 | awk '{print $1}')
+  echo "$dir: $count LOC"
+done
 
-# File types
-find . -type f -not -path "*/node_modules/*" -not -path "*/.git/*" | sed 's/.*\.//' | sort | uniq -c | sort -rn | head -20
+# File count and LOC for each module
+find . -name "*.py" -not -path "*/__pycache__/*" -not -path "*/tests/*" | xargs wc -l | sort -n
+
+# Top 20 largest source files
+find . -name "*.py" -o -name "*.ts" -o -name "*.js" | grep -v node_modules | grep -v __pycache__ | xargs wc -l | sort -rn | head -20
 ```
 
 ---
@@ -114,98 +119,195 @@ Identify and document:
 
 ---
 
-## Phase 3: Plan Book Structure
+## Phase 3: Dynamic Chapter Planning
 
-### 3.1 Define Chapter Outline
+### 3.1 Calculate Chapter Count from Code Volume
 
-Follow the CoolClaws "Three-Layer" structure:
+**DO NOT use a fixed chapter count.** Calculate based on actual LOC:
 
-**Part 1: Macro Understanding (Chapters 1-3)**
-- Chapter 1: What is this project? Why does it matter?
-- Chapter 2: Repository overview and tech stack
-- Chapter 3: Quick start guide
+| Total LOC | Recommended Chapters | Strategy |
+|-----------|---------------------|----------|
+| < 1,000 | 6-10 | One chapter per module, focus on core flow |
+| 1,000 - 5,000 | 10-18 | One chapter per major component, group related files |
+| 5,000 - 15,000 | 18-30 | Split large modules into sub-chapters, cover each algorithm |
+| 15,000 - 30,000 | 30-45 | Each significant class gets its own section, cover all variants |
+| > 30,000 | 45+ | Full exhaustive analysis, every non-trivial function documented |
 
-**Part 2: Core Engine (Chapters 4-10)**
-- Chapter 4: Main entry point and initialization
-- Chapter 5: Core data structures and state management
-- Chapter 6: Primary processing pipeline
-- Chapter 7: Configuration system
-- Chapter 8: Key algorithms and logic
-- Chapter 9: Error handling and resilience
-- Chapter 10: Testing strategy
+**Calculation formula:**
 
-**Part 3: Extension Ecosystem (Chapters 11+)**
-- Chapter 11: Plugin/extension system
-- Chapter 12: Tool integrations
-- Chapter 13: API and interfaces
-- Chapter 14: Deployment and operations
-- Chapter 15: Performance optimization
+```python
+def calculate_chapters(total_loc, module_breakdown):
+    """
+    total_loc: total lines of source code (excluding tests, examples, docs)
+    module_breakdown: dict of {module_name: loc}
+    """
+    # Base: 3 chapters for intro/overview/quickstart
+    base = 3
 
-**Appendices**
-- Appendix A: Reading path guide (for different roles)
-- Appendix B: Configuration reference
-- Appendix C: Glossary of terms
-- Appendix D: Version changelog
+    # Each module with > 100 LOC gets its own chapter
+    module_chapters = sum(1 for loc in module_breakdown.values() if loc > 100)
 
-### 3.2 Create Chapter Titles
+    # Large modules (> 500 LOC) get split into sub-chapters
+    split_chapters = sum(loc // 500 for loc in module_breakdown.values() if loc > 500)
 
-Generate descriptive titles following the pattern:
-- `第 N 章 <主题>：<副标题>`
-- Examples:
-  - "第 4 章 LangGraph 引擎：图驱动的 Agent 编排"
-  - "第 6 章 11 层中间件管道：Agent 的神经系统"
+    # Every 1,000 LOC of total code needs ~1 appendix or deep-dive
+    appendix_chapters = max(1, total_loc // 2000)
 
-### 3.3 Define Key Features (for index.md)
+    return base + module_chapters + split_chapters + appendix_chapters
+```
 
-Extract 3-4 key features to highlight on the book's homepage:
-- Feature title + 1-2 sentence description
-- SVG icon representing the feature
+### 3.2 Module-to-Chapter Mapping Rules
+
+For each source directory, apply these rules:
+
+**Rule 1: One module = one chapter (minimum)**
+Each directory with > 100 LOC of non-trivial code gets at least one chapter.
+
+**Rule 2: Large modules get split**
+A module with > 500 LOC should be split into multiple chapters:
+- Each public class with > 50 LOC → one subsection
+- Each public function with > 30 LOC → documented with full code
+- Each algorithm/strategy variant → its own comparison section
+
+**Rule 3: Registry/mapping files get their own chapter**
+Files like `mapping.py`, `registry.py`, `__init__.py` with many exports deserve a chapter explaining the registration pattern.
+
+**Rule 4: Variants get dedicated sections**
+If a base class has 14 subclasses (e.g., DPO's 14 loss variants), each variant gets its own subsection with real code.
+
+**Rule 5: Configuration dataclasses get full documentation**
+Every field in a dataclass/Pydantic model gets documented with its default value, type, and effect.
+
+### 3.3 Chapter Outline Template
+
+After calculation, produce a chapter plan like:
+
+```
+Part 1: 宏观认知 (Chapters 1-3) — fixed
+Part 2: 基础设施层 (Chapters 4-{N}) — one per core module
+Part 3: 核心实现层 (Chapters {N+1}-{M}) — split large modules
+Part 4: 高级特性 (Chapters {M+1}-{K}) — variants, extensions, integrations
+Part 5: 超参数与配置 (Chapters {K+1}-{P}) — dataclass field docs
+Appendices — reference tables, glossary, reading paths
+```
+
+### 3.4 Code Detail Preservation Rules
+
+**These rules are MANDATORY:**
+
+1. **Never replace real code with `...` or `# actual code from repo`** — copy the actual implementation
+2. **Every code block must show the real function signature** — parameters, types, return types
+3. **Complex functions (> 20 lines) must be shown in full** — not summarized
+4. **Show the actual default values** — not `<default>` placeholders
+5. **Include the file path as a comment** — `# 摘自 swift/loss/embedding.py:123`
+6. **Annotate key lines** — add inline comments explaining design decisions
+7. **Show the inheritance chain** — `class DPOTrainer(Trainer, DPOTrainerMixin)` — both parents matter
+8. **Include conditional branches** — if/else logic reveals design decisions
+9. **Show error handling** — try/except blocks are part of the design
+10. **Preserve magic numbers with explanation** — `temperature=0.1  # InfoNCE默认温度`
 
 ---
 
-## Phase 4: Generate Content
+## Phase 4: Deep Code Reading
 
-### 4.1 Chapter Writing Template
+### 4.1 Read Every Significant File
+
+For each source file identified in Phase 1:
+
+1. **Read the full file** — use `Read` tool with appropriate limits
+2. **Identify all public classes** — document their inheritance chain
+3. **Identify all public functions** — note signatures and LOC
+4. **Map the call graph** — which functions call which
+5. **Note all configuration parameters** — with defaults and effects
+6. **Extract real code snippets** — save for use in chapters
+
+### 4.2 Code Annotation Process
+
+For each code snippet to be included in a chapter:
+
+```python
+# WRONG — do not do this:
+def loss_function(...):
+    # ... actual code from repo
+    return loss
+
+# RIGHT — do this instead:
+# 摘自 swift/loss/embedding.py:45
+def InfoNCELoss(
+    query: torch.Tensor,      # query 嵌入向量 [B, D]
+    positive: torch.Tensor,   # 正样本嵌入向量 [B, D]
+    negatives: torch.Tensor,  # 负样本嵌入矩阵 [B, N, D]
+    temperature: float = 0.1, # 温度参数，控制分布平滑度
+    in_batch_negatives: bool = True  # 是否使用 batch 内负样本
+) -> torch.Tensor:
+    """InfoNCE 损失函数实现。
+
+    通过最大化 query 与 positive 的相似度、
+    最小化 query 与 negatives 的相似度来学习嵌入表示。
+    """
+    # 计算 query 与 positive 的余弦相似度
+    pos_sim = F.cosine_similarity(query, positive, dim=-1)  # [B]
+
+    # 计算 query 与所有负样本的相似度
+    neg_sim = torch.bmm(
+        query.unsqueeze(1),    # [B, 1, D]
+        negatives.transpose(1, 2)  # [B, D, N]
+    ).squeeze(1)  # [B, N]
+
+    # 拼接正负样本 logits
+    logits = torch.cat([pos_sim.unsqueeze(1), neg_sim], dim=1)  # [B, N+1]
+
+    # 除以温度参数
+    logits = logits / temperature
+
+    # 目标：正样本索引为 0
+    targets = torch.zeros(query.size(0), dtype=torch.long, device=query.device)
+
+    return F.cross_entropy(logits, targets)
+```
+
+### 4.3 Comparison Table Rules
+
+When comparing implementations (e.g., loss function variants):
+
+- **Show the actual difference in code**, not just descriptions
+- Include the mathematical formula if applicable
+- Show the hyperparameter difference (e.g., `beta=0.1` vs `beta=0.5`)
+- Include a "when to use" recommendation based on the code logic
+
+---
+
+## Phase 5: Generate Content
+
+### 5.1 Chapter Writing Rules
 
 Each chapter follows this structure:
 
 ```markdown
 # 第 N 章 <章节标题>
 
-<引言段落 - 概述本章内容、目标、读者将获得什么>
+<引言段落 — 概述本章内容，说明该模块在整体架构中的位置>
 
-## N.1 <小节标题>
+## N.1 <核心概念>
 
-<概念解释>
-- Clear definitions
-- Why this matters
-- How it fits into the bigger picture
+<概念解释，为什么需要这个模块>
 
-<Code snippet from source>
+### 源码实现
+
 ```python
-# 简化后的调用链
-def key_function(...):
-    # ... actual code from repo
+# 摘自 <实际文件路径>:<行号>
+<真实代码，保留完整实现>
 ```
 
-<Analysis of the code>
-- What it does
-- Design decisions
-- Trade-offs
+<逐行/逐段分析>
 
-## N.2 <小节标题>
+## N.2 <变体/配置/使用方式>
 
-<Architecture diagram>
-```
-Component A → Component B → Component C
-                ↓
-            Component D
-```
+<对比表格，包含实际参数差异>
 
-<Table comparing approaches>
-| Approach | Pros | Cons | When to Use |
-|----------|------|------|-------------|
-| A        | ...  | ...  | ...         |
+## N.3 <设计决策>
+
+<为什么这样设计，有什么 trade-off>
 
 ## 小结
 
@@ -214,68 +316,29 @@ Component A → Component B → Component C
 - **要点 3**：<设计决策总结>
 ```
 
-### 4.2 Content Generation Rules
+### 5.2 Content Generation Rules
 
-1. **Code-Driven**: Every major concept must have a real code snippet
-2. **Progressive Disclosure**: Start simple, add complexity gradually
+1. **Real Code Only**: Every major concept must show the actual source code with file path
+2. **Progressive Disclosure**: Start with the interface/signature, then dive into implementation
 3. **Visual Aids**: Use ASCII diagrams, tables, and flowcharts
-4. **Real Paths**: Reference actual file paths from the repo
+4. **Real Paths**: Reference actual file paths (`swift/loss/embedding.py`)
 5. **Version-Specific**: Note which version/commit you're analyzing
-6. **Comparison Tables**: Compare with alternatives when relevant
+6. **Comparison Tables**: Show real code differences between variants
+7. **Full Signatures**: Show all parameters with types and defaults
+8. **Inheritance Chains**: Show `class Child(Parent1, Parent2)` with both parents explained
 
-### 4.3 Introduction Chapter Template (Chapter 1)
+### 5.3 Chapter Templates
 
-```markdown
-# 第 1 章 <项目名> 是什么，为什么重要
-
-## 1.1 从名字说起
-
-<项目全称解释、命名由来>
-
-## 1.2 <项目类型> vs <替代方案>：本质区别
-
-<对比表格>
-| 维度 | <项目名> | <替代方案 1> | <替代方案 2> |
-|------|----------|--------------|--------------|
-| 设计理念 | ... | ... | ... |
-| 核心特性 | ... | ... | ... |
-
-## 1.3 <项目> 的三个核心特征
-
-**特征一：<特征名>。** <详细解释>
-
-**特征二：<特征名>。** <详细解释>
-
-**特征三：<特征名>。** <详细解释>
-
-## 1.4 发展历程
-
-<版本演进、关键里程碑>
-
-## 1.5 实际用例
-
-**用例一：<用例名>。** <描述>
-
-**用例二：<用例名>。** <描述>
-
-## 1.6 与其他产品的定位对比
-
-<对比表格>
-
-## 小结
-
-- **要点 1**
-- **要点 2**
-- **要点 3**
-```
+See TEMPLATES.md for detailed templates. Key change from v1:
+- **Template B (Core Engine)**: Now requires full implementation code, not simplified call chains
+- **Template C (Extension System)**: Now requires showing the registration mechanism code
+- **New Template D (Configuration)**: New template for documenting dataclass fields with full parameter tables
 
 ---
 
-## Phase 5: Build & Deploy
+## Phase 6: Build & Deploy
 
-### 5.1 Initialize VitePress Project
-
-Create the book project structure:
+### 6.1 Initialize VitePress Project
 
 ```bash
 mkdir <project>-book
@@ -284,7 +347,7 @@ npm init -y
 npm install -D vitepress
 ```
 
-### 5.2 Create package.json
+### 6.2 Create package.json
 
 ```json
 {
@@ -303,16 +366,16 @@ npm install -D vitepress
 }
 ```
 
-### 5.3 Create VitePress Config
+### 6.3 Create VitePress Config
 
 Generate `.vitepress/config.ts` with:
 - Site title and description
 - Navigation bar (开始阅读, 目录, GitHub)
-- Sidebar organized by parts
+- **Sidebar dynamically generated from actual chapter count** — do not hardcode
 - Footer and social links
 - Search enabled
 
-### 5.4 Generate index.md
+### 6.4 Generate index.md
 
 Create homepage with:
 - Hero layout
@@ -320,32 +383,31 @@ Create homepage with:
 - Action buttons (开始阅读, 查看目录, GitHub)
 - 3-4 feature cards with icons
 
-### 5.5 Generate contents.md
+### 6.5 Generate contents.md
 
-Create table of contents page listing all chapters organized by parts.
+Create table of contents page listing **all chapters** organized by parts. Must match the actual number of chapters generated.
 
-### 5.6 Create Chapter Files
+### 6.6 Create Chapter Files
 
-Write all chapters in `chapters/` directory:
+Write all chapters in `chapters/` directory. File naming:
 - `01-<slug>.md`
 - `02-<slug>.md`
-- ...
+- ... (continue for all dynamically-planned chapters)
 - `appendix-a-<slug>.md`
 - `appendix-b-<slug>.md`
 - `appendix-c-<slug>.md`
 
-### 5.7 Add Assets
+### 6.7 Add Assets
 
 Create `public/` directory:
 - `favicon.svg`
-- `logo.png`
-- `icons/` directory with feature icons
+- `logo.svg`
 
-### 5.8 Setup GitHub Actions
+### 6.8 Setup GitHub Actions
 
 Create `.github/workflows/deploy.yml` for automatic deployment to GitHub Pages.
 
-### 5.9 Create README.md
+### 6.9 Create README.md
 
 ```markdown
 # <项目名> 源码解析
@@ -374,7 +436,7 @@ npm run docs:build
 MIT
 ```
 
-### 5.10 Initialize Git Repository
+### 6.10 Initialize Git Repository
 
 ```bash
 git init
@@ -385,22 +447,44 @@ git remote add origin https://github.com/<username>/<project>-book.git
 git push -u origin main
 ```
 
+**Note**: If HTTPS push fails (common in China), try SSH:
+```bash
+git remote set-url origin git@github.com:<username>/<project>-book.git
+git push -u origin main
+```
+
 ---
 
 ## Quality Checklist
 
 Before finalizing the book, verify:
 
+- [ ] Chapter count matches the dynamic calculation from Phase 3
+- [ ] **Every code snippet is real source code** — no `...` or `<placeholder>` patterns
 - [ ] All chapters have consistent formatting
-- [ ] Code snippets are from actual source files with file paths noted
+- [ ] Code snippets include file path comments (`# 摘自 swift/loss/embedding.py:45`)
+- [ ] Function signatures show all parameters with types and defaults
+- [ ] Class definitions show full inheritance chains
 - [ ] ASCII diagrams are clear and accurate
 - [ ] Tables are properly formatted in Markdown
 - [ ] All internal links work (run `npm run docs:build` to check)
-- [ ] Navigation sidebar matches chapter structure
+- [ ] Navigation sidebar matches actual chapter structure
 - [ ] Index page has compelling description and features
 - [ ] Appendices provide useful reference material
 - [ ] GitHub Actions workflow is configured
 - [ ] README.md is complete
+
+---
+
+## Anti-Patterns (DO NOT DO)
+
+1. **Never write `def foo(...): return <call>()`** — show the real implementation
+2. **Never write `<参数>` or `<类型>` placeholders** — use actual parameter names and types
+3. **Never skip error handling code** — try/except reveals design decisions
+4. **Never skip conditional branches** — if/else logic is part of the architecture
+5. **Never write "详见源码"** — the reader is reading the book to avoid reading source
+6. **Never hardcode chapter count to 15** — calculate from LOC
+7. **Never write `# ... actual code from repo`** — this is a book, not a link
 
 ---
 
@@ -410,10 +494,12 @@ Before finalizing the book, verify:
 2. **Follow the code**: Trace execution from entry points to understand data flow
 3. **Identify the "magic"**: What makes this project special? Focus on that
 4. **Use real examples**: Extract actual usage patterns from tests or docs
-5. **Compare and contrast**: Help readers understand trade-offs
+5. **Compare and contrast**: Help readers understand trade-offs with real code diffs
 6. **Write for multiple audiences**: Beginners need context, experts need depth
 7. **Keep chapters focused**: Each chapter should have a clear theme
 8. **Update for versions**: Note which version you're analyzing, mention breaking changes
+9. **Annotate, don't just copy**: Add inline comments explaining WHY, not just WHAT
+10. **Show the registry pattern**: How modules register themselves is key architecture
 
 ---
 
@@ -424,27 +510,21 @@ Before finalizing the book, verify:
 ├── .vitepress/
 │   └── config.ts
 ├── .github/
-│   └── workflows/
+│   ── workflows/
 │       └── deploy.yml
 ├── chapters/
 │   ├── 01-what-is-<project>.md
 │   ├── 02-repo-overview.md
 │   ├── 03-quick-start.md
-│   ├── 04-core-engine.md
-│   ├── 05-data-flow.md
-│   ├── 06-configuration.md
-│   ├── 07-extension-system.md
-│   ├── 08-deployment.md
+│   ├── 04-<module-1>.md        ← one per module, count varies
+│   ├── 05-<module-2>.md
+│   ├── ...                      ← continues based on LOC
 │   ├── appendix-a-reading-path.md
 │   ├── appendix-b-config-reference.md
 │   └── appendix-c-glossary.md
 ├── public/
 │   ├── favicon.svg
-│   ├── logo.png
-│   └── icons/
-│       ├── feature1.svg
-│       ├── feature2.svg
-│       └── feature3.svg
+│   └── logo.svg
 ├── index.md
 ├── contents.md
 ├── package.json
@@ -456,8 +536,9 @@ Before finalizing the book, verify:
 
 ## References
 
-This skill is reverse-engineered from the CoolClaws book pattern:
+This skill is reverse-engineered from the CoolClaws book pattern and optimized for code-detail preservation:
 - **Source**: https://github.com/coolclaws
 - **Top book**: deerflow-book (576 stars)
 - **Pattern**: VitePress + Markdown + GitHub Pages
 - **Style**: Progressive disclosure, code-driven, architecture-focused
+- **v2.0 improvements**: Dynamic chapter count from LOC, mandatory real code preservation, inline annotation

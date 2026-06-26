@@ -1,8 +1,8 @@
-# Source Code Book Skill - Quick Start Guide
+# Source Code Book Skill v2.0 - Quick Start Guide
 
 ## What This Skill Does
 
-This skill generates comprehensive source code analysis books for open-source projects, following the proven CoolClaws pattern that produced 70+ books with the top one (deerflow-book) gaining 576 GitHub stars.
+This skill generates comprehensive source code analysis books for open-source projects. **Chapter count is dynamically determined by code volume** — a 500-line utility gets 8 chapters, a 20,000-line framework gets 40+ chapters. **Every significant implementation preserves its real code** with line-by-line annotations, not simplified pseudo-code.
 
 ## How to Use
 
@@ -11,16 +11,18 @@ This skill generates comprehensive source code analysis books for open-source pr
 Simply ask Claude Code:
 - "分析这个仓库 https://github.com/owner/repo"
 - "Create a source code book for this repo"
-- "为这个项目写一本源码解析书"
-- "Generate a book analyzing this codebase"
+- "为这个项目写一本源码解析书，尽可能详细"
+- "Generate a book analyzing this codebase, preserve all code details"
+- "源码解析，保留每个函数的实现细节"
 
 ### What You'll Get
 
 A complete VitePress-based static site with:
-- **Structured chapters** (15-25 chapters organized in parts)
+- **Dynamically-planned chapters** (count based on LOC analysis)
+- **Real source code in every chapter** — full implementations, not `...` placeholders
 - **Professional homepage** with hero section and feature cards
-- **Table of contents** page
-- **Three appendices** (reading guide, config reference, glossary)
+- **Table of contents** page matching actual chapter count
+- **Three+ appendices** (reading guide, config reference, glossary)
 - **GitHub Actions** for automatic deployment
 - **Ready to publish** on GitHub Pages
 
@@ -29,8 +31,8 @@ A complete VitePress-based static site with:
 ### Phase 1: Clone & Discover (5-10 min)
 - Clone target repository
 - Map directory structure
+- **Extract LOC metrics per module** ← NEW
 - Identify key modules and entry points
-- Extract metrics (line counts, git history, dependencies)
 
 ### Phase 2: Analyze Architecture (10-20 min)
 - Understand design patterns
@@ -38,27 +40,36 @@ A complete VitePress-based static site with:
 - Identify architectural layers
 - Extract key algorithms and data flows
 
-### Phase 3: Plan Book Structure (5-10 min)
-- Define chapter outline (3 parts + appendices)
+### Phase 3: Dynamic Chapter Planning (5-10 min) ← CHANGED
+- **Calculate chapter count from LOC** ← NEW
+- **Map each module to chapters based on code density** ← NEW
 - Create descriptive chapter titles
 - Identify 3-4 key features for homepage
-- Plan code snippets and diagrams
+- Plan code snippets (real code, not placeholders)
 
-### Phase 4: Generate Content (30-60 min)
+### Phase 4: Deep Code Reading (10-20 min) ← NEW
+- **Read every significant source file** ← NEW
+- **Annotate code with inline comments** ← NEW
+- Extract real code snippets with file paths
+- Map call graphs between modules
+
+### Phase 5: Generate Content (30-90 min)
 - Write Chapter 1: "What is X, why it matters"
 - Write Chapters 2-3: Overview and quick start
-- Write Chapters 4-10: Core engine deep-dives
-- Write Chapters 11+: Extension ecosystem
+- Write module chapters: **with full real code** ← CHANGED
+- Write variant chapters: **with code diff comparisons** ← NEW
+- Write configuration chapters: **with full parameter tables** ← NEW
 - Write appendices
 
-### Phase 5: Build & Deploy (5-10 min)
+### Phase 6: Build & Deploy (5-10 min)
 - Initialize VitePress project
 - Generate all configuration files
 - Create index and contents pages
 - Set up GitHub Actions workflow
 - Initialize git repository
+- **Try SSH push if HTTPS fails** ← NEW
 
-**Total time: 1-2 hours for a complete book**
+**Total time: 1-2.5 hours depending on code volume**
 
 ## Example Output
 
@@ -70,45 +81,65 @@ myproject-book/
 │   ├── 01-what-is-myproject.md
 │   ├── 02-repo-overview.md
 │   ├── 03-quick-start.md
-│   ├── 04-core-engine.md
-│   ├── ...
+│   ├── 04-<module-1>.md        ← count varies by LOC
+│   ├── 05-<module-2>.md
+│   ├── ...                      ← continues dynamically
 │   ├── appendix-a-reading-path.md
 │   ├── appendix-b-config-reference.md
 │   └── appendix-c-glossary.md
 ├── public/
 │   ├── favicon.svg
-│   └── icons/
+│   └── logo.svg
 ├── index.md
 ├── contents.md
 ├── package.json
-└── README.md
+├── README.md
+└── CNAME (optional)
 ```
 
 ## Quality Features
 
-### 1. Code-Driven Analysis
-Every major concept includes real code snippets from the source repository with file paths noted.
+### 1. Dynamic Chapter Planning ← NEW
+Chapter count is calculated from LOC, not fixed. Small repos get focused analysis, large repos get exhaustive deep-dives.
 
-### 2. Progressive Disclosure
+### 2. Real Code Preservation ← IMPROVED
+Every major concept shows the **actual source code** with file path comments. No `...` or `<placeholder>` patterns. Functions > 20 lines are shown in full.
+
+### 3. Code Annotation ← NEW
+Key lines are annotated with inline comments explaining design decisions, not just what the code does.
+
+### 4. Progressive Disclosure
 Content starts with macro understanding, then dives into core engine, finally covers extension ecosystem.
 
-### 3. Visual Aids
+### 5. Visual Aids
 - ASCII architecture diagrams
-- Comparison tables
+- Comparison tables with real code diffs ← IMPROVED
 - Flow charts
-- Configuration examples
+- Configuration parameter tables ← NEW
 
-### 4. Multiple Reader Paths
+### 6. Multiple Reader Paths
 Appendix A provides reading recommendations for:
 - Beginner developers
 - Architects / deep developers
 - DevOps / operations engineers
 
-### 5. Production Ready
+### 7. Production Ready
 - VitePress configuration
 - GitHub Actions deployment
 - Responsive design
 - Local search enabled
+
+## v2.0 Changes from v1.0
+
+| Aspect | v1.0 | v2.0 |
+|--------|------|------|
+| Chapter count | Fixed 15-25 | Dynamic from LOC |
+| Code snippets | Simplified `def foo(...)` | Full real implementation |
+| Placeholders | `<参数>`, `<类型>` | Actual parameter names and types |
+| Variants | Grouped in one section | Each variant gets its own subsection |
+| Configuration | Brief mention | Full parameter table with defaults |
+| Registry systems | Not covered | Dedicated template |
+| Push method | HTTPS only | HTTPS + SSH fallback |
 
 ## Customization
 
@@ -117,8 +148,8 @@ You can customize the output by specifying:
 ### Target Audience
 "Focus on beginners" or "Target advanced developers"
 
-### Chapter Count
-"Keep it concise with 10 chapters" or "Comprehensive with 25+ chapters"
+### Detail Level
+"Keep it concise" or "尽可能详细，每个函数都要讲"
 
 ### Language
 "Write in English" or "用中文写"
@@ -126,23 +157,19 @@ You can customize the output by specifying:
 ### Focus Areas
 "Emphasize the plugin system" or "Focus on performance aspects"
 
-## Tips for Best Results
-
-1. **Choose well-documented projects**: Projects with good READMEs and comments produce better books
-2. **Specify version**: "Analyze version 2.0" for more focused analysis
-3. **Request specific depth**: "Deep dive into the scheduling algorithm" for detailed chapters
-4. **Ask for comparisons**: "Compare with similar projects" for context-rich content
-
 ## Troubleshooting
 
 ### Issue: "Repository too large"
 **Solution**: Ask to "Focus on the src/ directory only" or "Analyze the core module only"
 
 ### Issue: "Not enough code examples"
-**Solution**: Ask to "Include more code snippets from implementation files"
+**Solution**: v2.0 always includes real code. If still insufficient, say "show every function implementation"
 
 ### Issue: "Chapters too shallow"
-**Solution**: Ask to "Add more technical depth to chapter 5" or "Expand the architecture analysis"
+**Solution**: v2.0 shows full code. If still shallow, say "annotate each line explaining the design decision"
+
+### Issue: "GitHub push fails"
+**Solution**: v2.0 tries SSH fallback: `git remote set-url origin git@github.com:<user>/<repo>.git`
 
 ## Publishing Your Book
 
@@ -155,9 +182,10 @@ git commit -m "Initial commit"
 git branch -M main
 git remote add origin https://github.com/<username>/myproject-book.git
 git push -u origin main
+# If HTTPS fails, use SSH:
+git remote set-url origin git@github.com:<username>/myproject-book.git
+git push -u origin main
 ```
-
-GitHub Actions will automatically deploy to `https://<username>.github.io/myproject-book/`
 
 ### Option 2: Local Preview
 ```bash
@@ -173,45 +201,10 @@ npm run docs:build
 # Upload to any static hosting
 ```
 
-## Examples from CoolClaws
-
-Study these real examples:
-- **deerflow-book** (576⭐) - Best example of comprehensive analysis
-- **openclaw-book** (23⭐) - Good example of architecture-focused writing
-- **mini-sglang-book** (6⭐) - Good example of educational approach
-
-All available at: https://github.com/coolclaws
-
-## Advanced Usage
-
-### Analyze Multiple Repos
-"Analyze these 3 repos and create a comparative book"
-
-### Update Existing Book
-"Update the book with the latest version of the repository"
-
-### Add New Chapter
-"Add a chapter about the testing strategy"
-
-### Change Style
-"Rewrite in a more conversational tone" or "Make it more academic"
-
-## Skill Implementation
-
-The skill is implemented as a Claude Code skill file at:
-```
-~/.claude/skills/source-code-book/SKILL.md
-```
-
-With detailed templates at:
-```
-~/.claude/skills/source-code-book/TEMPLATES.md
-```
-
 ## Credits
 
-This skill is reverse-engineered from the CoolClaws book pattern:
+This skill is reverse-engineered from the CoolClaws book pattern and optimized for code-detail preservation:
 - **Source**: https://github.com/coolclaws
 - **Analysis**: Based on study of 70+ repositories
 - **Pattern**: VitePress + Markdown + GitHub Pages
-- **Style**: Progressive disclosure, code-driven, architecture-focused
+- **v2.0 Style**: Dynamic chapters, real code preservation, inline annotation
