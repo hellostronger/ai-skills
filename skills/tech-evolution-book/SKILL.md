@@ -1,6 +1,6 @@
 ---
 name: tech-evolution-book
-description: Analyze technology evolution in book chapter format - track iterations, improvements, and implementation details
+description: "Analyze technology evolution in book chapter format. Chapter count is dynamically determined by version count and feature complexity. Every technical improvement preserves its real implementation details with code snippets, architecture diagrams, and benchmark data. Use when the user wants to track tech iterations, model evolution, version history, or development roadmap. Triggers include: 'analyze tech evolution', 'track model iterations', '技术演进分析', '模型迭代', '发展历程', '版本历史', '尽可能详细', '保留实现细节'."
 triggers:
   - analyze tech evolution
   - track model iterations
@@ -10,6 +10,8 @@ triggers:
   - 版本历史
   - analyze [tech-name] evolution
   - [tech-name] 发展史
+  - 尽可能详细
+  - 保留实现细节
 requires_tools:
   - WebSearch
   - WebFetch
@@ -24,25 +26,27 @@ fallback_tools:
   - Use kimi-webbridge to access official blogs and GitHub pages
 ---
 
-# Tech Evolution Book Generator
+# Tech Evolution Book Generator v2.0
 
 ## Purpose
 
-Generate a comprehensive book analyzing the evolution of a technology (AI models, frameworks, libraries, etc.) in chapter format, covering:
+Generate a comprehensive book analyzing the evolution of a technology (AI models, frameworks, libraries, etc.) in chapter format. **Chapter count is dynamically determined by version count and feature complexity** — 3 versions get 10 chapters, 10 versions get 30+ chapters. **Every technical improvement preserves its real implementation details** with code snippets, architecture diagrams, and benchmark data from official sources.
+
+Covers:
 
 1. **Origins & Motivation** - Why the technology was created
-2. **Version Iterations** - Each major version/release
-3. **Improvements** - What changed in each version
-4. **Implementation Details** - How improvements were implemented
-5. **Impact & Significance** - Why each change matters
+2. **Version Iterations** - Each major version/release (one chapter per version)
+3. **Improvements** - What changed in each version (with real code/diagrams)
+4. **Implementation Details** - How improvements were implemented (not simplified)
+5. **Impact & Significance** - Why each change matters (with benchmark data)
 
 ---
 
 ## Agentic Search Strategy
 
-### Core Principle: Iterative Deepening
+### Core Principle: Iterative Deepening with Detail Preservation
 
-The search process is **agentic** - it continues expanding until information requirements are met.
+The search process is **agentic** - it continues expanding until information requirements are met. **Every search must preserve implementation details, not just summaries.**
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -51,23 +55,23 @@ The search process is **agentic** - it continues expanding until information req
 │                                                             │
 │  ┌──────────────┐                                           │
 │  │ Initial Query│                                           │
-│  └──────┬───────┘                                           │
+│  └──────┬───────                                           │
 │         │                                                   │
 │         ▼                                                   │
-│  ┌──────────────┐     ┌──────────────┐                     │
+│  ┌──────────────     ┌──────────────┐                     │
 │  │   Search     │────▶│  Evaluate    │                     │
 │  └──────┬───────┘     │  Results     │                     │
 │         │             └──────┬───────┘                     │
 │         │                    │                             │
 │         │              ┌─────┴─────┐                       │
 │         │              │ Satisfied?│                       │
-│         │              └─────┬─────┘                       │
+│         │              └──────────┘                       │
 │         │                    │                             │
 │         │              No    │    Yes                      │
 │         │              ┌─────┴─────┐                       │
 │         │              │           │                       │
 │         │              ▼           ▼                       │
-│         │        ┌──────────┐  ┌──────────┐               │
+│         │        ┌──────────┐  ┌──────────               │
 │         │        │ Expand   │  │ Proceed  │               │
 │         │        │ Search   │  │ to Write │               │
 │         │        └─────┬────┘  └──────┘───┘               │
@@ -95,7 +99,7 @@ Evaluation Criteria:
 
 If No → Expand to:
 ├── "[technology] GitHub releases"
-├── "[technology] changelog"
+── "[technology] changelog"
 ├── "[technology] roadmap"
 └── [company/blog] "[technology] announcements"
 ```
@@ -110,26 +114,28 @@ For each identified version:
 Search Iteration:
 ├── "[tech] [version] release announcement"
 ├── "[tech] [version] technical report"
-├── "[tech] [version] arxiv"  ← Flag for PDF download!
+── "[tech] [version] arxiv"  ← Flag for PDF download!
 ├── "[tech] [version] improvements changes"
 └── "[tech] [version] architecture changes"
 
 Evaluation Criteria:
 - Core improvements identified? (Yes/No)
-- Implementation details found? (Yes/No)
+- Implementation details found? (Yes/No) ← MUST include code/diagrams
 - Benchmark data available? (Yes/No)
+- Real code snippets available? (Yes/No) ← NEW in v2.0
 
 If No → Expand to:
 ├── "[tech] [version] paper pdf"
 ├── "[tech] [version] blog post"
 ├── "[tech] [version] GitHub commit analysis"
 ├── "[tech] [version] vs previous version"
+├── "[tech] [version] source code implementation" ← NEW
 └── "[tech] [version] community discussion"
 ```
 
 ### Phase 3: Technical Implementation Research
 
-**Goal**: Code-level implementation details
+**Goal**: Code-level implementation details (MANDATORY in v2.0)
 
 ```
 For each key improvement:
@@ -142,13 +148,15 @@ Search Iteration:
 
 Evaluation Criteria:
 - Algorithm/math explanation found? (Yes/No)
-- Code snippets available? (Yes/No)
+- Code snippets available? (Yes/No) ← MUST be real code, not pseudo-code
 - Performance impact documented? (Yes/No)
+- Implementation source (GitHub commit/PR)? (Yes/No) ← NEW
 
 If No → Expand to:
 ├── "[tech] [feature] source code"
 ├── "[tech] [feature] GitHub pull request"
 ├── "[tech] [feature] architecture diagram"
+├── "[tech] [feature] implementation details" ← NEW
 └── "[tech] similar [feature] implementation"
 ```
 
@@ -211,14 +219,15 @@ When search results contain **arXiv links**:
 │     From abstract: Problem, solution, results     │
 │     From HuggingFace: Community summary           │
 │     From PapersWithCode: Benchmark tables         │
+│     From PDF: Implementation code, formulas       │ ← NEW in v2.0
 │                                                    │
 │  4. Summarize for Book Chapter                     │
 │     - Create structured summary                    │
-│     - Extract implementation details               │
-│     - Quote key findings                           │
+│     - Extract implementation details with code     │ ← CHANGED
+│     - Quote key findings with page numbers         │ ← NEW
 │     - Add citation reference                       │
 │                                                    │
-└────────────────────────────────────────────────────┘
+└─────────────────────────────────────────────────────┘
 ```
 
 ### PDF Analysis Tools
@@ -233,7 +242,7 @@ Read(
 )
 ```
 
-**PDF Analysis Focus Areas**:
+**PDF Analysis Focus Areas (v2.0 — MANDATORY)**:
 
 When analyzing technical papers, extract:
 
@@ -242,21 +251,26 @@ When analyzing technical papers, extract:
    - Key innovations claimed
    - Scope of the work
 
-2. **Methodology Section**
-   - Architecture design
-   - Algorithms used
-   - Implementation details
-   - Mathematical formulations
+2. **Methodology Section** ← CRITICAL
+   - Architecture design with diagrams
+   - Algorithms with formulas
+   - Implementation details with code snippets ← NEW
+   - Mathematical formulations (copy exact equations)
 
 3. **Experiments Section**
-   - Benchmark results
-   - Comparison tables
-   - Performance metrics
+   - Benchmark results (exact numbers from tables)
+   - Comparison tables (preserve all columns)
+   - Performance metrics (with statistical significance if available)
 
 4. **Discussion & Conclusion**
    - Limitations
    - Future directions
    - Key takeaways
+
+5. **Appendix/Supplementary** ← NEW in v2.0
+   - Hyperparameter settings
+   - Implementation details
+   - Additional experiments
 
 ### Example: Processing arXiv Paper
 
@@ -272,35 +286,41 @@ Actions:
    - pages="1-5" → Abstract, Introduction, Architecture overview
    - pages="6-10" → Training methodology, Experiments
    - pages="11-15" → Benchmark results, Conclusion
+   - pages="16-20" → Appendix, implementation details ← NEW
 
-4. Extract key information:
+4. Extract key information (v2.0 — MORE DETAILED):
    - Title: "Qwen2 Technical Report"
    - Authors: Alibaba Cloud Qwen Team
    - Key innovations: GQA, improved tokenizer, extended training
-   - Benchmarks: MMLU, MATH, HumanEval scores
-   - Architecture details: Transformer with modifications
+   - Benchmarks: MMLU, MATH, HumanEval scores (exact numbers from Table 2)
+   - Architecture details: Transformer with modifications (with diagram from Figure 1)
+   - Implementation: GQA code structure (from Section 3.2) ← NEW
+   - Hyperparameters: learning rate, batch size, etc. (from Appendix) ← NEW
 
 5. Integrate into chapter:
    - Chapter 4: Qwen-2 Architecture Breakthrough
-   - Section 4.2: GQA Implementation (from paper Section 3)
-   - Section 4.3: Benchmark Analysis (from paper Table 2)
+   - Section 4.2: GQA Implementation (from paper Section 3.2, with code)
+   - Section 4.3: Benchmark Analysis (from paper Table 2, exact numbers)
+   - Section 4.4: Training Details (from paper Appendix A) ← NEW
 ```
 
 ---
 
-## Information Sufficiency Criteria
+## Information Sufficiency Criteria (v2.0 — ENHANCED)
 
 ### Minimum Requirements for Each Version
 
 Before moving to next version, ensure:
 
-| Requirement | Source Type | Minimum Depth |
-|-------------|-------------|---------------|
-| Release date | Official announcement | Exact date |
-| Core improvements | Paper/Blog/GitHub | 3+ specific changes |
-| Implementation details | Paper/Code | 1+ technical explanation |
-| Performance data | Benchmark/Paper | Comparison numbers |
-| Motivation | Interview/Blog | Why changes were made |
+| Requirement | Source Type | Minimum Depth | v2.0 Addition |
+|-------------|-------------|---------------|---------------|
+| Release date | Official announcement | Exact date | - |
+| Core improvements | Paper/Blog/GitHub | 3+ specific changes | Each with implementation detail |
+| Implementation details | Paper/Code | 1+ technical explanation | **Must include code/diagram** |
+| Performance data | Benchmark/Paper | Comparison numbers | Exact numbers from tables |
+| Motivation | Interview/Blog | Why changes were made | - |
+| **Code/Architecture** | **GitHub/Paper** | **1+ real code snippet** | **NEW in v2.0** |
+| **Hyperparameters** | **Paper/Appendix** | **Key settings** | **NEW in v2.0** |
 
 ### Expansion Triggers
 
@@ -309,8 +329,10 @@ Continue searching if:
 - ❌ Missing any minimum requirement
 - ❌ Information is vague/generic
 - ❌ No implementation details found
+- ❌ **Only pseudo-code available, no real code** ← NEW
 - ❌ Conflicting information between sources
 - ❌ Need deeper explanation of specific feature
+- ❌ **Benchmark numbers are approximate, not exact** ← NEW
 
 ### Termination Conditions
 
@@ -319,8 +341,8 @@ Stop searching when:
 - ✅ All minimum requirements met
 - ✅ Information from primary sources (official/paper)
 - ✅ Cross-validated across multiple sources
-- ✅ Implementation details are concrete
-- ✅ Benchmark data is available
+- ✅ Implementation details are concrete with real code ← CHANGED
+- ✅ Benchmark data is available with exact numbers ← CHANGED
 
 ---
 
@@ -346,6 +368,11 @@ Level 5 (Alternative Sources):
 "[tech] [version] reddit discussion"
 "[tech] [version] blog analysis"
 "[tech] [version] video explanation"
+
+Level 6 (Code-Specific) ← NEW in v2.0:
+"[tech] [feature] implementation GitHub"
+"[tech] [feature] source code commit"
+"[tech] [feature] pull request details"
 ```
 
 ### Multi-Query Parallel Search Strategy
@@ -371,13 +398,14 @@ queries = [
   "[tech] [version] vs previous comparison"
 ]
 
-# Phase 3: Technical Details (5 parallel queries)
+# Phase 3: Technical Details (6 parallel queries) ← ENHANCED
 queries = [
   "[tech] [feature] implementation code",
   "[tech] [feature] algorithm explanation",
   "[tech] [feature] architecture diagram",
   "[tech] [feature] paper technical details",
-  "how [tech] implements [feature]"
+  "how [tech] implements [feature]",
+  "[tech] [feature] GitHub source code" ← NEW
 ]
 
 # Phase 4: Comparison (6 parallel queries)
@@ -402,6 +430,7 @@ If results are insufficient:
 | No benchmarks | Add "benchmark" or "evaluation" | "Qwen 2 benchmark comparison" |
 | No code | Add "GitHub" or "implementation" | "Qwen 2 GQA implementation GitHub" |
 | No timeline | Add "chronological" or "timeline" | "Qwen model evolution timeline" |
+| **Only pseudo-code** | **Add "source code" or "commit"** | **"Qwen 2 GQA source code commit"** ← NEW |
 
 ---
 
@@ -431,6 +460,7 @@ If results are insufficient:
 │  │ - Release info search           │                       │
 │  │ - arXiv check → Download PDF    │                       │
 │  │ - PDF analysis (Read tool)      │                       │
+│  │ - Code search (GitHub)          │ ← NEW                 │
 │  │ - EVAL: Requirements met?       │                       │
 │  │   No → Expand search            │                       │
 │  │   Yes → Next version            │                       │
@@ -447,7 +477,7 @@ If results are insufficient:
 │  │ - EVAL: Details sufficient?     │                       │
 │  │   No → Expand search            │                       │
 │  │   Yes → Proceed                 │                       │
-│  └─────────────┬───────────────────┘                       │
+│  └─────────────┬───────────────────                       │
 │                │                                            │
 │                ▼                                            │
 │  ┌─────────────────────────────────┐                       │
@@ -461,9 +491,18 @@ If results are insufficient:
 │                │                                            │
 │                ▼                                            │
 │  ┌─────────────────────────────────┐                       │
-│  │ Phase 5: Book Generation        │                       │
+│  │ Phase 5: Dynamic Chapter Plan   │ ← NEW                 │
+│  │ - Calculate chapters from       │                       │
+│  │   version count + features      │                       │
+│  │ - Map versions to chapters      │                       │
+│  │ - Plan code snippets            │                       │
+│  └─────────────┬───────────────────                       │
+│                │                                            │
+│                ▼                                            │
+│  ┌─────────────────────────────────┐                       │
+│  │ Phase 6: Book Generation        │                       │
 │  │ - Structure chapters            │                       │
-│  │ - Write content                 │                       │
+│  │ - Write content with REAL CODE  │ ← CHANGED             │
 │  │ - Add citations                 │                       │
 │  │ - Generate VitePress config     │                       │
 │  └─────────────────────────────────┘                       │
@@ -471,7 +510,7 @@ If results are insufficient:
 │                ▼                                            │
 │  END                                                        │
 │                                                             │
-└─────────────────────────────────────────────────────────────┘
+└─────────────────────────────────────────────────────────────
 ```
 
 ---
@@ -484,16 +523,17 @@ If results are insufficient:
 |------|---------|-------------|
 | **WebSearch** | Information discovery | Every search iteration |
 | **WebFetch** | Get page content | For arXiv pages, official blogs |
-| **Bash** | Download PDFs | `curl -o paper.pdf arxiv_url` |
-| **Read** | PDF analysis | `pages="1-20"` for paper content |
+| **Bash** | Download PDFs, clone repos | `curl -o paper.pdf arxiv_url`, `git clone` |
+| **Read** | PDF analysis, code reading | `pages="1-20"` for paper, full file for code |
 | **Write** | Generate book | Final output generation |
+| **kimi-webbridge** | Browser automation | When WebSearch/WebFetch blocked |
 
 ### Tool Failure Handling
 
 **When WebSearch returns incomplete results:**
 
 ```
-┌────────────────────────────────────────────────────────┐
+────────────────────────────────────────────────────────┐
 │           WebSearch Failure Recovery                   │
 ├────────────────────────────────────────────────────────┤
 │                                                        │
@@ -533,7 +573,16 @@ If results are insufficient:
 │  │ 4. Suggest manual follow-up                  │    │
 │  └──────────────────────────────────────────────┘    │
 │                                                        │
-└────────────────────────────────────────────────────────┘
+│  Scenario 5: No real code found ← NEW in v2.0        │
+│  ┌──────────────────────────────────────────────┐    │
+│  │ Solution: Clone repo and read source         │    │
+│  │ 1. Bash: git clone [repo_url]                │    │
+│  │ 2. Glob: find relevant files                 │    │
+│  │ 3. Read: extract implementation code         │    │
+│  │ 4. Include in chapter with file path         │    │
+│  └──────────────────────────────────────────────┘    │
+│                                                        │
+└────────────────────────────────────────────────────────
 ```
 
 ### Knowledge Integration Rules
@@ -568,20 +617,146 @@ Always:
 4. Link to official sources when possible
 ```
 
-### PDF Reading Strategy
+### PDF Reading Strategy (v2.0 — ENHANCED)
 
 ```
 # Step 1: Download PDF
 curl -L -o /tmp/paper.pdf "https://arxiv.org/pdf/XXXX.XXXXX.pdf"
 
-# Step 2: Read key sections
+# Step 2: Read key sections (READ MORE in v2.0)
 Read(file_path="/tmp/paper.pdf", pages="1-3")   # Abstract, Introduction
 Read(file_path="/tmp/paper.pdf", pages="4-8")   # Methodology
 Read(file_path="/tmp/paper.pdf", pages="9-12")  # Experiments
 Read(file_path="/tmp/paper.pdf", pages="13-15") # Conclusion
+Read(file_path="/tmp/paper.pdf", pages="16-25") # Appendix ← NEW in v2.0
 
-# Step 3: Extract and structure information
-# Use extracted content to populate chapter sections
+# Step 3: Extract and structure information (MORE DETAILED in v2.0)
+# - Extract exact benchmark numbers from tables
+# - Extract code snippets from implementation sections
+# - Extract hyperparameters from appendix
+# - Extract architecture diagrams (describe in ASCII)
+```
+
+---
+
+## Dynamic Chapter Planning (NEW in v2.0)
+
+### Calculate Chapter Count from Version Count
+
+**DO NOT use a fixed chapter count.** Calculate based on actual version count and feature complexity:
+
+| Version Count | Features per Version | Recommended Chapters | Strategy |
+|---------------|---------------------|---------------------|----------|
+| 1-3 | Basic | 6-10 | One chapter per version + tech deep-dive |
+| 3-5 | Moderate | 10-18 | One chapter per version + feature chapters |
+| 5-8 | Complex | 18-30 | Split major versions, each feature gets section |
+| 8-12 | Very Complex | 30-45 | Each version + each major feature |
+| > 12 | Exhaustive | 45+ | Full version history + all features |
+
+**Calculation formula:**
+
+```python
+def calculate_chapters(version_count, features_per_version, has_competitors=True):
+    """
+    version_count: number of major versions
+    features_per_version: average number of key features per version
+    has_competitors: whether to include comparison chapter
+    """
+    # Base: 2 chapters for intro + future
+    base = 2
+    
+    # One chapter per version
+    version_chapters = version_count
+    
+    # Major features get their own chapter if > 3 per version
+    if features_per_version > 3:
+        feature_chapters = min(features_per_version, 5)  # Cap at 5
+    else:
+        feature_chapters = 0
+    
+    # Comparison chapter if competitors exist
+    comparison_chapters = 1 if has_competitors else 0
+    
+    # Appendix chapters
+    appendix_chapters = 2  # Quick reference + citations
+    
+    return base + version_chapters + feature_chapters + comparison_chapters + appendix_chapters
+```
+
+### Version-to-Chapter Mapping Rules
+
+**Rule 1: Each major version = one chapter (minimum)**
+Each version with significant changes gets its own chapter.
+
+**Rule 2: Major versions get split**
+A version with > 5 key features should be split into multiple chapters:
+- Core architecture changes → one section
+- Training improvements → one section
+- Performance gains → one section
+
+**Rule 3: Each key feature gets a subsection**
+Each feature within a version gets its own subsection with:
+- Problem it solves
+- Implementation details (with code/diagram)
+- Performance impact
+
+**Rule 4: Technical deep-dives get dedicated chapters**
+Cross-version technologies (e.g., GQA, RoPE) get their own chapter explaining evolution.
+
+**Rule 5: Comparison chapters for competitive landscape**
+Include competitor comparison with benchmark tables.
+
+---
+
+## Code Detail Preservation Rules (NEW in v2.0)
+
+**These rules are MANDATORY for tech-evolution-book:**
+
+1. **Never replace real code with `...` or pseudo-code** — copy the actual implementation
+2. **Every code block must show the real function/class signature** — parameters, types
+3. **Complex implementations (> 20 lines) must be shown in full** — not summarized
+4. **Show the actual hyperparameters** — not `<value>` placeholders
+5. **Include the source as a comment** — `# 摘自 arxiv:2407.10671 Section 3.2` or `# 摘自 GitHub: QwenLM/Qwen2/main/modeling_qwen2.py`
+6. **Annotate key lines** — add inline comments explaining design decisions
+7. **Show the evolution** — how code changed from v1 to v2
+8. **Include conditional branches** — if/else logic reveals design decisions
+9. **Show error handling** — try/except blocks are part of the design
+10. **Preserve benchmark numbers exactly** — copy from tables, don't approximate
+
+### Code Snippet Rules
+
+```python
+# WRONG — do not do this:
+class GroupedQueryAttention(nn.Module):
+    def __init__(self, ...):
+        # ... actual implementation
+        pass
+
+# RIGHT — do this instead:
+# 摘自 arxiv:2407.10671 Section 3.2 + GitHub: QwenLM/Qwen2
+class Qwen2Attention(nn.Module):
+    """Multi-headed attention from 'Attention Is All You Need' paper.
+    Modified to use Grouped Query Attention (GQA)."""
+
+    def __init__(
+        self,
+        hidden_size: int,
+        num_heads: int,
+        num_kv_heads: int,  # NEW in v2: fewer than num_heads
+        max_position_embeddings: int = 32768,
+        rope_theta: float = 1000000.0,
+    ):
+        super().__init__()
+        self.hidden_size = hidden_size
+        self.num_heads = num_heads
+        self.num_kv_heads = num_kv_heads  # GQA: shared KV heads
+        self.head_dim = hidden_size // num_heads
+        
+        # Split qkv projection for GQA
+        self.q_proj = nn.Linear(hidden_size, num_heads * self.head_dim, bias=True)
+        self.k_proj = nn.Linear(hidden_size, num_kv_heads * self.head_dim, bias=True)
+        self.v_proj = nn.Linear(hidden_size, num_kv_heads * self.head_dim, bias=True)
+        self.o_proj = nn.Linear(num_heads * self.head_dim, hidden_size, bias=False)
 ```
 
 ---
@@ -635,7 +810,32 @@ Extract:
 - Comparison with Qwen-1.5
 - Performance improvements
 
-EVAL: Requirements met? YES
+Read: pages="16-20" ← NEW in v2.0
+Extract:
+- Hyperparameter settings
+- Implementation details
+- Additional experiments
+
+# Also search for code ← NEW in v2.0
+Search: "Qwen2 GQA implementation GitHub"
+Result: Found GitHub repo QwenLM/Qwen2
+
+Bash: git clone --depth 1 https://github.com/QwenLM/Qwen2.git /tmp/qwen2-code
+
+Read: /tmp/qwen2-code/modeling_qwen2.py (lines 150-250)
+Extract:
+- Actual Qwen2Attention class implementation
+- GQA code structure
+- RoPE integration
+
+EVAL: Requirements met?
+- Release date: ✅ 2024年6月
+- Core improvements: ✅ GQA, tokenizer改进, 训练数据扩展
+- Implementation details: ✅ 从论文和GitHub提取
+- Performance data: ✅ Benchmark表格 (exact numbers)
+- **Real code**: ✅ 从GitHub提取 ← NEW
+- **Hyperparameters**: ✅ 从Appendix提取 ← NEW
+
 DECISION: Proceed to next version
 ```
 
@@ -658,7 +858,23 @@ Extract:
 - Mathematical formulation
 - Code implementation hints
 
-EVAL: Implementation details sufficient? YES
+# Also get code from transformers library ← NEW in v2.0
+Search: "transformers GQA implementation GitHub"
+Result: Found huggingface/transformers
+
+Bash: git clone --depth 1 https://github.com/huggingface/transformers.git /tmp/transformers
+
+Read: /tmp/transformers/src/transformers/models/qwen2/modeling_qwen2.py
+Extract:
+- Full Qwen2Attention implementation
+- GQA integration with RoPE
+- Attention mask handling
+
+EVAL: Implementation details sufficient?
+- Algorithm: ✅ 从论文提取
+- **Real code**: ✅ 从transformers库提取 ← NEW
+- Performance impact: ✅ 从Qwen2论文提取
+
 DECISION: Proceed
 ```
 
@@ -669,134 +885,24 @@ DECISION: Proceed
 Generate a **VitePress-ready** book with:
 
 1. `index.md` - Hero page with overview
-2. `chapters/*.md` - Individual chapters
-3. `.vitepress/config.ts` - Navigation config
+2. `chapters/*.md` - Individual chapters (count varies by version count)
+3. `.vitepress/config.ts` - Navigation config (dynamically generated)
 
 Each chapter should include:
 - **Citations**: `[1] arxiv:2407.10671` style references
-- **Source links**: Link to original papers/blogs
-- **Code snippets**: Where applicable
-- **Tables**: Benchmark comparisons, feature comparisons
-
----
-
-## Quick Start Example
-
-```
-User: 请分析 Qwen 模型从 Qwen-1 到 Qwen-2.5 的演进历程，包含每个版本的改进和实现细节
-
-Claude:
-好的！我将使用 Agentic Search 策略深度分析 Qwen 模型演进。
-
-## Phase 1: 版本发现
-搜索: "Qwen model evolution timeline" ...
-
-评估: 是否找到所有版本？
-- 找到: Qwen-1 (2023.08), Qwen-1.5 (2024.02), Qwen-2 (2024.06), Qwen-2.5 (2024.09)
-- 结果: ✅ 满足要求
-
-## Phase 2: 版本深度分析
-分析 Qwen-2 ...
-搜索: "Qwen 2 technical report arxiv"
-发现 arXiv 论文: https://arxiv.org/abs/2407.10671
-
-下载 PDF ...
-读取 pages 1-5: 提取架构概述
-读取 pages 6-10: 提取 GQA 实现细节
-读取 pages 11-15: 提取 benchmark 数据
-
-评估: 是否满足最低要求？
-- 发布日期: ✅ 2024年6月
-- 核心改进: ✅ GQA, tokenizer改进, 训练数据扩展
-- 实现细节: ✅ 从论文提取
-- 性能数据: ✅ Benchmark表格
-- 改进动机: ❌ 缺少
-
-扩展搜索: "Qwen 2 design decisions motivation"
-...
-
-[继续迭代直到满足所有要求]
-```
-
----
-
-## Content Synthesis Strategy
-
-### Information Integration Pattern
-
-When multiple search results return partial information:
-
-```
-┌──────────────────────────────────────────────────────┐
-│           Content Synthesis Workflow                  │
-├──────────────────────────────────────────────────────┤
-│                                                      │
-│  1. Collect Search Results                          │
-│     ├─ Result A: Partial timeline                   │
-│     ├─ Result B: Benchmark data                     │
-│     ├─ Result C: Architecture info                  │
-│     └─ Result D: Release details                    │
-│                                                      │
-│  2. Extract Key Facts from Each                     │
-│     ├─ Extract: Version names, dates, numbers       │
-│     ├─ Extract: Benchmark scores                    │
-│     ├─ Extract: Technical terms                     │
-│     └─ Extract: Feature descriptions                │
-│                                                      │
-│  3. Cross-Reference & Validate                      │
-│     ├─ Match version dates across sources           │
-│     ├─ Verify benchmark numbers                     │
-│     ├─ Confirm architecture details                 │
-│     └─ Flag inconsistencies                         │
-│                                                      │
-│  4. Synthesize Unified View                         │
-│     ├─ Create master timeline table                 │
-│     ├─ Build benchmark comparison tables            │
-│     ├─ Write technical explanations                 │
-│     └─ Add citations to sources                     │
-│                                                      │
-│  5. Identify Missing Information                    │
-│     ├─ Check against minimum requirements           │
-│     ├─ List gaps that need expansion                │
-│     └─ Generate next search queries                 │
-│                                                      │
-└──────────────────────────────────────────────────────┘
-```
-
-### Fact Extraction Rules
-
-When processing search results:
-
-```
-Priority 1: Official Sources
-├─ Official blogs (qwenlm.github.io)
-├─ GitHub repositories (QwenLM/Qwen*)
-├─ arXiv papers (arxiv.org/abs/*)
-├─ Official documentation
-→ Extract ALL available facts
-
-Priority 2: Community Sources  
-├─ HuggingFace (huggingface.co)
-├─ Papers With Code (paperswithcode.com)
-├─ Reddit discussions (r/LocalLLaMA)
-├─ Blog posts (medium, towardsdatascience)
-→ Extract confirmed facts, verify numbers
-
-Priority 3: Secondary Sources
-├─ News articles
-├─ YouTube transcripts
-├─ Twitter/X posts
-→ Use for sentiment, community reaction only
-```
+- **Source links**: Link to original papers/blogs/GitHub
+- **Code snippets**: REAL code from papers/GitHub, not pseudo-code ← CHANGED
+- **Tables**: Benchmark comparisons, feature comparisons (exact numbers) ← CHANGED
+- **Diagrams**: ASCII architecture diagrams from papers ← NEW
 
 ---
 
 ## Output Generation Template
 
-### Standard Book Structure
+### Standard Book Structure (Dynamic)
 
 ```markdown
-# [Technology Name] 模型演进史
+# [Technology Name] 演进史
 
 ## 目录
 
@@ -804,9 +910,11 @@ Priority 3: Secondary Sources
 - 第 2 章：版本 1.x - 基础奠基
 - 第 3 章：版本 2.x - 核心突破
 - 第 4 章：版本 3.x - 成熟完善
-- 第 5 章：技术深度解析
+- 第 5 章：[核心技术] 深度解析 ← If features > 3
 - 第 6 章：竞品对比分析
 - 第 7 章：未来展望
+- 附录 A：版本演进速查表
+- 附录 B：参考文献
 
 ---
 
@@ -828,17 +936,17 @@ Priority 3: Secondary Sources
 
 ---
 
-## 第 2 章 [版本名]：[定位]（[日期]）
+## 第 N 章 [版本名]：[定位]（[日期]）
 
 > 核心改进：[列举3个主要改进]
 
-### 2.1 发布背景
+### N.1 发布背景
 
 **发布时间**：[日期]
 
 **版本定位**：[定位描述]
 
-### 2.2 核心改进详解
+### N.2 核心改进详解
 
 #### 改进 1：[名称]
 
@@ -847,8 +955,9 @@ Priority 3: Secondary Sources
 **方案**：[具体方案]
 
 **实现**：
-```
-[代码/架构图]
+```python
+# 摘自 [论文/GitHub] ← REAL CODE in v2.0
+[实际代码，不省略]
 ```
 
 **效果**：[量化效果]
@@ -856,24 +965,21 @@ Priority 3: Secondary Sources
 #### 改进 2：[名称]
 [同上结构]
 
-#### 改进 3：[名称]
-[同上结构]
+### N.3 性能评估
 
-### 2.3 性能评估
-
-| Benchmark | 本版本 | 上版本 | 提升 |
-|-----------|-------|-------|-----|
+| Benchmark | 上一版本 | 本版本 | 提升 |
+|-----------|---------|-------|-----|
 | [测试名] | [数值] | [数值] | [+X%] |
 
-### 2.4 社区反响
+### N.4 社区反响
 
 [发布后的评价、讨论、采用情况]
 
 ---
 
-## 第 N 章 技术深度解析
+## 第 N 章 [核心技术] 深度解析
 
-### N.1 [核心技术] 实现原理
+### N.1 [技术] 实现原理
 
 #### 基础概念
 
@@ -886,16 +992,16 @@ Priority 3: Secondary Sources
 #### 实现细节
 
 ```python
-# 关键代码片段
-[代码]
+# 摘自 [GitHub/论文] ← REAL CODE in v2.0
+[完整实现代码]
 ```
 
 #### 性能影响
 
 | 维度 | 无此技术 | 有此技术 | 差异 |
 |-----|---------|---------|-----|
-| 速度 | [数值] | [数值] | [+X] |
-| 内存 | [数值] | [数值] | [-X] |
+| 速度 | [数值] | [数值] | [+/-X] |
+| 内存 | [数值] | [数值] | [+/-X] |
 
 ---
 
@@ -913,8 +1019,6 @@ Priority 3: Secondary Sources
 1. [官方博客标题] - [URL]
 2. [论文标题] - arXiv:[编号]
 3. [GitHub仓库] - [URL]
-
----
 ```
 
 ### Benchmark Table Templates
@@ -945,21 +1049,38 @@ Priority 3: Secondary Sources
 
 ---
 
-## Quality Check Before Output
+## Quality Check Before Output (v2.0 — ENHANCED)
 
 Before finalizing output, verify:
 
-| Requirement | Check | Status |
-|-------------|-------|--------|
-| All versions covered? | List versions found | ✅/❌ |
-| Each version has 3+ improvements? | Count improvements | ✅/❌ |
-| Benchmark tables complete? | Check data | ✅/❌ |
-| Technical details included? | Check depth | ✅/❌ |
-| Citations added? | List sources | ✅/❌ |
-| Comparison section present? | Verify | ✅/❌ |
-| Future predictions included? | Verify | ✅/❌ |
+| Requirement | Check | Status | v2.0 Addition |
+|-------------|-------|--------|---------------|
+| All versions covered? | List versions found | ✅/❌ | - |
+| Each version has 3+ improvements? | Count improvements | ✅/❌ | Each with implementation detail |
+| Benchmark tables complete? | Check data | ✅/ | Exact numbers from sources |
+| Technical details included? | Check depth | ✅/❌ | **Must include real code** |
+| Citations added? | List sources | ✅/❌ | - |
+| Comparison section present? | Verify | ✅/❌ | - |
+| Future predictions included? | Verify | ✅/❌ | - |
+| **Real code snippets?** | **Check all code blocks** | ✅/❌ | **NEW in v2.0** |
+| **No pseudo-code?** | **Verify no `...` patterns** | ✅/❌ | **NEW in v2.0** |
+| **File paths in comments?** | **Check code comments** | ✅/❌ | **NEW in v2.0** |
 
 If any ❌ → Return to search phase
+
+---
+
+## Anti-Patterns (DO NOT DO) ← NEW in v2.0
+
+1. **Never write `class Foo(nn.Module): # ... actual implementation`** — show the real code
+2. **Never write `<parameter>` or `<value>` placeholders** — use actual parameter names and values
+3. **Never skip implementation details** — readers want to know HOW, not just WHAT
+4. **Never approximate benchmark numbers** — copy exact numbers from tables
+5. **Never write "详见论文"** — the reader is reading the book to avoid reading papers
+6. **Never hardcode chapter count to 7** — calculate from version count
+7. **Never write `# ... implementation details`** — this is a book, not a link
+8. **Never skip the appendix** — hyperparameters and additional experiments matter
+
 ---
 
 ## Example Output (Qwen Model Evolution)
@@ -985,7 +1106,7 @@ If any ❌ → Return to search phase
 |-------|------|--------|------|
 | GQA (Grouped Query Attention) | 架构 | ⭐⭐⭐ | KV cache 减少 4x |
 | 扩展上下文窗口 | 能力 | ⭐⭐ | 支持 32K+ tokens |
-| 训练数据扩展 | 训练 | ⭐⭐ | 7T tokens |
+| 训练数据扩展 | 训练 | ⭐ | 7T tokens |
 
 ### 2.3 GQA 实现详解
 
@@ -1001,6 +1122,34 @@ GQA 将多个 query head 分组，每组共享一个 KV head：
 MHA: 32 query heads → 32 KV heads (各独立)
 GQA: 32 query heads → 8 KV heads (分组共享)
      每4个 query head 共享1个 KV head
+```
+
+#### 代码实现
+
+```python
+# 摘自 arxiv:2407.10671 Section 3.2 + GitHub: QwenLM/Qwen2
+class Qwen2Attention(nn.Module):
+    """Multi-headed attention with Grouped Query Attention."""
+
+    def __init__(
+        self,
+        hidden_size: int,
+        num_heads: int,
+        num_kv_heads: int,  # GQA: fewer than num_heads
+        max_position_embeddings: int = 32768,
+        rope_theta: float = 1000000.0,
+    ):
+        super().__init__()
+        self.hidden_size = hidden_size
+        self.num_heads = num_heads
+        self.num_kv_heads = num_kv_heads  # GQA关键：共享KV头
+        self.head_dim = hidden_size // num_heads
+        
+        # QKV投影（GQA版本）
+        self.q_proj = nn.Linear(hidden_size, num_heads * self.head_dim, bias=True)
+        self.k_proj = nn.Linear(hidden_size, num_kv_heads * self.head_dim, bias=True)
+        self.v_proj = nn.Linear(hidden_size, num_kv_heads * self.head_dim, bias=True)
+        self.o_proj = nn.Linear(num_heads * self.head_dim, hidden_size, bias=False)
 ```
 
 #### 效果对比
@@ -1021,7 +1170,7 @@ GQA: 32 query heads → 8 KV heads (分组共享)
 | MATH | 36.1 | 58.0 | +21.9 |
 | HumanEval | 52.8 | 64.1 | +11.3 |
 
-> 数据来源：Qwen2 Technical Report (arxiv:2407.10671)
+> 数据来源：Qwen2 Technical Report (arxiv:2407.10671) Table 2
 
 ### 2.5 社区反响
 
@@ -1052,6 +1201,7 @@ Structure:
 - 技术术语保留英文原文
 - 解释使用中文
 - Benchmark 表格保持英文基准名称
+- 代码注释使用中文 ← NEW in v2.0
 
 Example:
 "Qwen-2 引入了 **GQA (Grouped Query Attention)** 技术，
@@ -1069,6 +1219,7 @@ Structure:
 - All content in English
 - Technical terms explained in English
 - Standard benchmark names
+- Code comments in English
 ```
 
 ---
@@ -1079,12 +1230,12 @@ Structure:
 
 ```
 Required Sections:
-1. Model Architecture (Transformer variants, attention mechanisms)
+1. Model Architecture (Transformer variants, attention mechanisms) ← With code
 2. Training Data (scale, composition, languages)
 3. Training Methodology (pretraining, fine-tuning stages)
-4. Benchmark Performance (MMLU, MATH, HumanEval, etc.)
+4. Benchmark Performance (MMLU, MATH, HumanEval, etc.) ← Exact numbers
 5. Specialized Variants (if any: Math, Coder, VL)
-6. Inference Efficiency (speed, memory, techniques)
+6. Inference Efficiency (speed, memory, techniques) ← With benchmarks
 7. Open Source Status (license, availability)
 ```
 
@@ -1092,9 +1243,9 @@ Required Sections:
 
 ```
 Required Sections:
-1. Core Architecture (design patterns, key components)
-2. API Evolution (breaking changes, new features)
-3. Performance Improvements (benchmarks, optimizations)
+1. Core Architecture (design patterns, key components) ← With code
+2. API Evolution (breaking changes, new features) ← With code diffs
+3. Performance Improvements (benchmarks, optimizations) ← Exact numbers
 4. Community Adoption (npm downloads, GitHub stars)
 5. Competitor Comparison (similar frameworks)
 6. Migration Guides (version upgrade paths)
@@ -1105,8 +1256,8 @@ Required Sections:
 ```
 Required Sections:
 1. Language Design Philosophy
-2. Syntax/Feature Evolution
-3. Runtime Improvements
+2. Syntax/Feature Evolution ← With code examples
+3. Runtime Improvements ← With benchmarks
 4. Standard Library Changes
 5. Tooling Updates (compilers, linters)
 6. Community & Ecosystem Growth
@@ -1123,6 +1274,7 @@ Required Sections:
 - Need to access official blogs (qwenlm.github.io, etc.)
 - Need real browser with login sessions
 - Need to navigate and extract content from dynamic pages
+- Need to access GitHub source code ← NEW in v2.0
 
 ### kimi-webbridge Workflow
 
@@ -1222,6 +1374,7 @@ await kimiCloseSession();
 | **WebSearch** | Fast, simple | May be blocked, incomplete results |
 | **WebFetch** | Direct page access | Domain restrictions common |
 | **kimi-webbridge** | Real browser, login sessions, dynamic content | Requires daemon running |
+| **git clone + Read** ← NEW | Real source code | Needs repo URL |
 
 ### Recommended Tool Order
 
@@ -1231,4 +1384,60 @@ await kimiCloseSession();
 3. If still blocked → Use kimi-webbridge
 4. For official blogs → Prefer kimi-webbridge directly
 5. For GitHub pages → Prefer kimi-webbridge directly
+6. For source code → git clone + Read ← NEW in v2.0
 ```
+
+---
+
+## Quick Start Example
+
+```
+User: 请分析 Qwen 模型从 Qwen-1 到 Qwen-2.5 的演进历程，包含每个版本的改进和实现细节
+
+Claude:
+好的！我将使用 Agentic Search 策略深度分析 Qwen 模型演进。
+
+## Phase 1: 版本发现
+搜索: "Qwen model evolution timeline" ...
+
+评估: 是否找到所有版本？
+- 找到: Qwen-1 (2023.08), Qwen-1.5 (2024.02), Qwen-2 (2024.06), Qwen-2.5 (2024.09)
+- 结果: ✅ 满足要求
+
+## Phase 2: 版本深度分析
+分析 Qwen-2 ...
+搜索: "Qwen 2 technical report arxiv"
+发现 arXiv 论文: https://arxiv.org/abs/2407.10671
+
+下载 PDF ...
+读取 pages 1-5: 提取架构概述
+读取 pages 6-10: 提取 GQA 实现细节
+读取 pages 11-15: 提取 benchmark 数据
+读取 pages 16-20: 提取超参数设置 ← NEW
+
+# 也搜索代码 ← NEW in v2.0
+搜索: "Qwen2 GQA implementation GitHub"
+克隆仓库: git clone https://github.com/QwenLM/Qwen2.git
+读取源码: modeling_qwen2.py (lines 150-250)
+提取: Qwen2Attention 完整实现
+
+评估: 是否满足最低要求？
+- 发布日期: ✅ 2024年6月
+- 核心改进: ✅ GQA, tokenizer改进, 训练数据扩展
+- 实现细节: ✅ 从论文和GitHub提取
+- 性能数据: ✅ Benchmark表格 (exact numbers)
+- **真实代码**: ✅ 从GitHub提取 ← NEW
+- **超参数**: ✅ 从Appendix提取 ← NEW
+
+[继续迭代直到满足所有要求]
+```
+
+---
+
+## References
+
+This skill is reverse-engineered from the CoolClaws book pattern and optimized for tech evolution analysis:
+- **Source**: https://github.com/coolclaws
+- **Pattern**: VitePress + Markdown + GitHub Pages
+- **Style**: Progressive disclosure, detail-driven, benchmark-focused
+- **v2.0 improvements**: Dynamic chapter count, mandatory real code preservation, GitHub source integration, enhanced PDF analysis

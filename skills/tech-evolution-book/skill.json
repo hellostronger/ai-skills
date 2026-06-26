@@ -1,23 +1,24 @@
 {
   "name": "tech-evolution-book",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "type": "skill",
-  "description": "Analyze technology evolution in book chapter format - track iterations, improvements, and implementation details of technologies like AI models, frameworks, etc.",
+  "description": "Analyze technology evolution in book chapter format. Chapter count is dynamically determined by version count and feature complexity. Every technical improvement preserves its real implementation details with code snippets, architecture diagrams, and benchmark data.",
+  "author": "hello_strong",
   "entry": "SKILL.md",
   "tags": [
-    "technology",
-    "evolution",
-    "history",
-    "analysis",
-    "ai-models",
-    "research",
-    "web-search",
-    "book"
+    "documentation",
+    "vitepress",
+    "tech-evolution",
+    "book-generation",
+    "github",
+    "code-detail-preservation",
+    "dynamic-chapter-planning",
+    "benchmark-analysis",
+    "paper-analysis"
   ],
   "languages": ["zh", "en"],
   "metadata": {
-    "category": "research",
-    "requires": ["web-search", "duckduckgo"],
+    "category": "documentation",
     "patterns": [
       "analyze tech evolution",
       "track model iterations",
@@ -25,10 +26,14 @@
       "模型迭代",
       "发展历程",
       "版本历史",
-      "analyze qwen",
-      "analyze llama",
-      "analyze gpt",
-      "model evolution book"
-    ]
+      "analyze [tech-name] evolution",
+      "[tech-name] 发展史",
+      "尽可能详细",
+      "保留实现细节"
+    ],
+    "changelog": {
+      "2.0.0": "Dynamic chapter planning based on version count. Mandatory real code preservation from papers/GitHub. Exact benchmark numbers. Enhanced PDF analysis including Appendix. GitHub source code integration. 8 anti-pattern rules. New Template F (Quick Reference) and Template G (Citations).",
+      "1.0.0": "Initial version with agentic search strategy and PDF analysis."
+    }
   }
 }
